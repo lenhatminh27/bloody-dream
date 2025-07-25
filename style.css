@@ -525,7 +525,7 @@ body {
 
 .decoration-left.is-visible {
   opacity: 1;
-  transform: translateX(0);
+  transform: rotate(57deg) translateX(0);
 }
 
 .decoration-top-left.is-visible {
