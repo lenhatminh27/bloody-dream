@@ -462,6 +462,82 @@ body {
   /* animation: clockHandRotate 4s ease-in-out infinite; */
 }
 
+@keyframes stab-effect-1 {
+  0%,
+  100% {
+    transform: translate(0, 0);
+  }
+  30% {
+    /* Rút ra 30px */
+    transform: translate(-16.5px, -25.1px);
+  }
+  40% {
+    /* Giữ nguyên */
+    transform: translate(-16.5px, -25.1px);
+  }
+  50% {
+    /* Đâm tới 15px */
+    transform: translate(8.2px, 12.5px);
+  }
+  60% {
+    /* Giữ nguyên */
+    transform: translate(8.2px, 12.5px);
+  }
+  70% {
+    /* Rụt lại một chút */
+    transform: translate(-2.7px, -4.2px);
+  }
+}
+
+@keyframes stab-effect-2 {
+  0%,
+  100% {
+    transform: translate(0, 0);
+  }
+  30% {
+    /* Rút ra 30px: di chuyển ngược hướng (trái->phải, trên->dưới) */
+    transform: translate(17.5px, 10.2px); /* +X, +Y */
+  }
+  40% {
+    /* Giữ nguyên */
+    transform: translate(17.5px, 10.2px);
+  }
+  50% {
+    /* Đâm tới 15px: di chuyển đúng hướng (phải->trái, dưới->lên) */
+    transform: translate(-8.7px, -10.2px); /* -X, -Y */
+  }
+  60% {
+    /* Giữ nguyên */
+    transform: translate(-8.7px, -10.2px);
+  }
+  70% {
+    /* Rụt lại một chút */
+    transform: translate(2.9px, 4.1px);
+  }
+}
+
+/* 
+  Bước 2: Áp dụng animation tương ứng cho mỗi kim.
+*/
+.clock-hand-1,
+.clock-hand-2 {
+  animation-timing-function: ease-in-out;
+  animation-iteration-count: infinite;
+}
+
+/* Kim thứ nhất sử dụng animation 1 */
+.clock-hand-1 {
+  animation-name: stab-effect-1;
+  animation-duration: 3s;
+}
+
+/* Kim thứ hai sử dụng animation 2, chạy lệch pha */
+.clock-hand-2 {
+  animation-name: stab-effect-2;
+  animation-duration: 3.5s;
+  animation-delay: 0.5s;
+}
+
 .main-clock {
   position: absolute;
   width: 91.51vw;
@@ -659,6 +735,43 @@ body {
   animation-delay: 2.5s;
 }
 
+.flower,
+.hoa-1,
+.hoa-2,
+.hoa-3,
+.hoa-4,
+.hoa-5,
+.hoa-6,
+.hoa-7,
+.hoa-8 {
+  /* 
+    - transition-property: transform (chỉ áp dụng cho thuộc tính transform)
+    - transition-duration: 0.3s (hiệu ứng kéo dài 0.3 giây)
+    - transition-timing-function: ease-in-out (bắt đầu và kết thúc mượt mà)
+  */
+  transition: transform 0.3s ease-in-out;
+}
+
+/* 
+  Bước 2: Định nghĩa trạng thái khi người dùng di chuột qua (hover).
+  Khi hover, chúng ta sẽ thay đổi thuộc tính 'transform' của bông hoa.
+*/
+.hoa-1:hover,
+.hoa-2:hover,
+.hoa-3:hover,
+.hoa-4:hover,
+.hoa-5:hover,
+.hoa-6:hover,
+.hoa-7:hover,
+.hoa-8:hover {
+  /* Phóng to bông hoa lên 1.2 lần (lớn hơn 20%) */
+
+  transform: scale(1.2);
+
+  /* Thêm một chút z-index để nó nổi lên trên các bông hoa khác nếu bị chồng lấn */
+  z-index: 10;
+}
+
 @keyframes flower-glitch {
   0% {
     opacity: 1;
@@ -746,6 +859,15 @@ body {
 
 .right-panel {
   transform-origin: right center;
+}
+
+.left-panel.open {
+  transform: rotateY(120deg);
+}
+
+/* Trạng thái khi panel bên phải được mở */
+.right-panel.open {
+  transform: rotateY(-120deg);
 }
 
 .bed-section {
@@ -887,9 +1009,29 @@ body {
 }
 
 .mau {
+  /* Vị trí và kích thước giữ nguyên */
   position: absolute;
   width: 100vw;
   left: 0vw;
+
+  /* 
+    DÙNG CLIP-PATH ĐỂ "CẮT" ẢNH 
+    inset(top right bottom left)
+    inset(0 0 100% 0) có nghĩa là cạnh dưới của "kéo" được kéo lên 100% -> che toàn bộ ảnh.
+  */
+  clip-path: inset(0 0 100% 0);
+
+  /* Tạo hiệu ứng chuyển động mượt mà khi "kéo" di chuyển */
+  transition: clip-path 6s ease-out;
+}
+
+/* Trạng thái cuối cùng khi được kích hoạt */
+.mau.is-visible {
+  /*
+    Cạnh dưới của "kéo" trở về 0% -> hiện toàn bộ ảnh.
+    Cạnh trên, trái, phải không thay đổi.
+  */
+  clip-path: inset(0 0 0 0);
 }
 
 .mo-mat {
@@ -1261,8 +1403,44 @@ body {
   }
 }
 
+@keyframes puppet-twitch-1 {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  25% {
+    transform: translateY(-8px);
+  }
+  50% {
+    transform: translateY(2px);
+  }
+  75% {
+    transform: translateY(-5px);
+  }
+}
+
+/* Keyframe cho chuyển động giật nảy 2 (biên độ lớn hơn, chậm hơn) */
+@keyframes puppet-twitch-2 {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  25% {
+    transform: translateY(-12px);
+  }
+  50% {
+    transform: translateY(5px);
+  }
+  75% {
+    transform: translateY(-7px);
+  }
+}
+
 .puppet-fall1 {
-  animation: puppetDrop1 1.8s ease-out forwards;
+  /* [anim-rơi-xuống], [anim-giật-nảy] */
+  animation: puppetDrop1 1.8s ease-out forwards,
+    puppet-twitch-1 3s ease-in-out 3s infinite;
+  /* twitch bắt đầu sau 1.8s, khi drop kết thúc */
 }
 
 @keyframes puppetDrop2 {
@@ -1283,5 +1461,113 @@ body {
 }
 
 .puppet-fall2 {
-  animation: puppetDrop2 1.8s ease-out forwards;
+  /* [anim-rơi-xuống], [anim-giật-nảy] */
+  animation: puppetDrop2 1.8s ease-out forwards,
+    puppet-twitch-2 3s ease-in-out 3s infinite;
+  /* twitch bắt đầu sau 1.8s, khi drop kết thúc */
+}
+
+@keyframes float-effect {
+  from {
+    transform: translateY(6px);
+  }
+  to {
+    transform: translateY(-6px);
+  }
+}
+
+.cloud-element,
+.clock-poem-text,
+.tree-text,
+.cua-phong,
+.tieng-ai,
+.giuong-nghieng,
+.giat-minh,
+.mo-mat {
+  /* animation-name: [tên-anim-1], [tên-anim-2]; */
+  animation-name: float-effect;
+
+  /* animation-duration: [thời-gian-1], [thời-gian-2]; */
+  /* Giữ nguyên thời gian glitch, thêm thời gian cho float */
+  animation-duration: 6s;
+
+  /* animation-timing-function: [hàm-thời-gian-1], [hàm-thời-gian-2]; */
+  animation-timing-function: ease-in-out;
+
+  /* animation-iteration-count: [số-lần-lặp-1], [số-lần-lặp-2]; */
+  animation-iteration-count: infinite;
+
+  /* Thêm hướng đi cho animation float */
+  animation-direction: alternate;
+}
+
+/* 3. (QUAN TRỌNG) Tạo sự lệch pha để chúng không trôi đồng bộ */
+/* Bằng cách thay đổi thời gian (duration) và độ trễ (delay) của animation thứ hai */
+.tree-text {
+  animation-duration: 1s, 7.5s;
+  animation-delay: 0s, 0.5s;
+}
+
+.cua-phong {
+  animation-duration: 2s, 5.8s;
+}
+
+.tieng-ai {
+  animation-duration: 1s, 8s;
+  animation-delay: 0s, 1s;
+}
+
+.giuong-nghieng {
+  animation-duration: 1s, 9s;
+}
+
+.giat-minh {
+  animation-duration: 1s, 6.5s;
+  animation-delay: 0s, 0.2s;
+}
+
+.mo-mat {
+  animation-duration: 1s, 7.2s;
+  animation-delay: 0s, 0.8s;
+}
+
+@keyframes violent-shake {
+  0%,
+  100% {
+    transform: translateX(0);
+  }
+  10%,
+  30%,
+  50%,
+  70%,
+  90% {
+    transform: translateX(-8px);
+  }
+  20%,
+  40%,
+  60%,
+  80% {
+    transform: translateX(8px);
+  }
+}
+.tay-phai,
+.roi-phai,
+.tay-trai,
+.roi-trai {
+  animation: violent-shake 0.2s infinite;
+  animation-play-state: paused;
+}
+
+/* 
+  Bước 3: Kích hoạt animation khi người dùng di chuột qua.
+*/
+.tay-phai:hover,
+.roi-phai:hover,
+.tay-trai:hover,
+.roi-trai:hover {
+  /* Đổi trạng thái animation thành 'running' để nó bắt đầu rung lắc */
+  animation-play-state: running;
+
+  /* Đưa phần tử lên trên để không bị che khuất khi rung */
+  z-index: 20;
 }

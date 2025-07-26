@@ -116,7 +116,7 @@
           class="decoration-top-right js-scroll-animate"
           src="./img/clock-decoration-top-right.png"
           alt="" />
-        <img src="./img/nua-dem.png" class="clock-poem-text glitch-text" />
+        <img src="./img/nua-dem.png" class="clock-poem-text" />
       </div>
       <div class="tree-section">
         <img
@@ -124,7 +124,7 @@
           src="https://api.builder.io/api/v1/image/assets/TEMP/754f241a24d4a297d1e2323efa6f9d62cadd6d2f?width=3840"
           alt="" />
         <img src="./img/tree.png" class="tree" />
-        <img src="./img/hon-treo.png" class="tree-text glitch-text" />
+        <img src="./img/hon-treo.png" class="tree-text" />
         <img src="./img/hoa.png" class="flower" />
         <img src="./img/hoa-1.png" class="hoa-1" />
         <img src="./img/hoa-2.png" class="hoa-2" />
@@ -138,8 +138,8 @@
       <div class="window-section">
         <img class="clock-bg" src="./img/bg.png" alt="" />
         <img src="./img/monster.gif" class="monster" />
-        <img src="./img/cua-phong.png" class="cua-phong glitch-text" />
-        <img src="./img/tieng-ai.png" class="tieng-ai glitch-text" />
+        <img src="./img/cua-phong.png" class="cua-phong" />
+        <img src="./img/tieng-ai.png" class="tieng-ai" />
         <img src="./img/left-panel.png" class="left-panel" />
         <img src="./img/right-panel.png" class="right-panel" />
       </div>
@@ -149,9 +149,7 @@
         <img src="./img/giuong-lon.png" class="giuong-lon" />
         <img src="./img/bong-duoi.png" class="bong-duoi" />
         <img src="./img/bong-tren.png" class="bong-tren" />
-        <img
-          src="./img/giuong-nghieng.png"
-          class="giuong-nghieng glitch-text" />
+        <img src="./img/giuong-nghieng.png" class="giuong-nghieng" />
       </div>
       <div class="roi-section">
         <img class="clock-bg" src="./img/bg.png" alt="" />
@@ -159,14 +157,14 @@
         <img src="./img/roi-phai.png" class="roi-phai" />
         <img src="./img/tay-trai.png" class="tay-trai" />
         <img src="./img/roi-trai.png" class="roi-trai" />
-        <img src="./img/giat-minh.png" class="giat-minh glitch-text" />
+        <img src="./img/giat-minh.png" class="giat-minh" />
       </div>
       <div class="mat-section">
         <img class="clock-bg" src="./img/bg.png" alt="" />
         <img src="./img/mat-trai.png" class="mat-trai" />
         <img src="./img/mat-phai.png" class="mat-phai" />
-        <img src="./img/mau.gif" class="mau" />
-        <img src="./img/mo-mat.png" class="mo-mat glitch-text" />
+        <img src="./img/mau.gif" class="mau js-scroll-animate" />
+        <img src="./img/mo-mat.png" class="mo-mat" />
       </div>
     </div>
     <script>
@@ -191,26 +189,28 @@
         }
       })
 
+      const windowSection = document.querySelector(".window-section")
       const leftPanel = document.querySelector(".left-panel")
       const rightPanel = document.querySelector(".right-panel")
-      const windowSection = document.querySelector(".window-section")
 
-      window.addEventListener("scroll", () => {
-        const sectionRect = windowSection.getBoundingClientRect()
-        const windowHeight = window.innerHeight
+      // Đảm bảo các phần tử tồn tại để không gây lỗi
+      if (windowSection && leftPanel && rightPanel) {
+        // Khi chuột đi vào panel trái, mở nó ra
+        leftPanel.addEventListener("click", () => {
+          leftPanel.classList.add("open")
+        })
 
-        const visible = Math.max(
-          0,
-          Math.min(1, (windowHeight - sectionRect.top) / sectionRect.height)
-        )
+        // Khi chuột đi vào panel phải, mở nó ra
+        rightPanel.addEventListener("click", () => {
+          rightPanel.classList.add("open")
+        })
 
-        const maxAngle = 120
-
-        const angle = visible * maxAngle
-
-        leftPanel.style.transform = `rotateY(${angle}deg)`
-        rightPanel.style.transform = `rotateY(-${angle}deg)`
-      })
+        // Khi chuột rời khỏi TOÀN BỘ khu vực cửa sổ, đóng cả hai lại
+        windowSection.addEventListener("mouseleave", () => {
+          leftPanel.classList.remove("open")
+          rightPanel.classList.remove("open")
+        })
+      }
 
       const roiSection = document.querySelector(".roi-section")
       const roi_phai = document.querySelectorAll(
@@ -244,6 +244,27 @@
           puppetDropped2 = true
         }
       })
+      const matSection = document.querySelector(".mat-section")
+      const bloodDrip = document.querySelector(".mau")
+
+      // Biến cờ để đảm bảo animation chỉ chạy một lần
+      let bloodAnimated = false
+
+      // Chỉ thêm event listener nếu các phần tử tồn tại
+      if (matSection && bloodDrip) {
+        window.addEventListener("scroll", () => {
+          const sectionRect = matSection.getBoundingClientRect()
+          const windowHeight = window.innerHeight
+
+          // Kiểm tra nếu section đã vào trong màn hình và animation chưa được chạy
+          if (!bloodAnimated && sectionRect.top < windowHeight * 0.8) {
+            // Kích hoạt animation bằng cách thêm class
+            bloodDrip.classList.add("is-visible")
+            // Đặt biến cờ thành true để không chạy lại
+            bloodAnimated = true
+          }
+        })
+      }
     </script>
   </body>
 </html>
